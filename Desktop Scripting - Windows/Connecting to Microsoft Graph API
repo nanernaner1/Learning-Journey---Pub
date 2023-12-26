@@ -1,0 +1,27 @@
+To write a script that uses Microsoft's Graph API to connect to your session of Teams and post a message to a specific person or Team, you would need the following:
+
+1. **Microsoft Teams Account**: You need a Microsoft Teams account with a valid subscription⁴.
+
+2. **Registered App in Azure Active Directory**: You need to register an application in Azure Active Directory⁴. This registered app will be used to authenticate and authorize your script's access to the Microsoft Graph API³.
+
+3. **Required Permissions**: Your registered app needs to have the necessary permissions to send messages via Teams¹. For sending a message in a channel, the permissions required are `ChannelMessage.Send`, `Group.ReadWrite.All`¹. For sending a message in a chat, the permissions required are `ChatMessage.Send`, `Chat.ReadWrite`¹.
+
+4. **Microsoft Graph SDK**: It's recommended to have the Microsoft Graph SDK installed in your development environment⁴. This SDK provides methods for interacting with the Microsoft Graph API and simplifies the process of making requests.
+
+5. **Access Token**: You need to acquire an access token that will be used to authenticate your requests to the Microsoft Graph API³. This token can be obtained using the credentials of your registered app.
+
+6. **User ID**: You need the User ID of each person you want to include in the chat³. This can be obtained using the Microsoft Graph API.
+
+7. **HTTP Requests**: You will be making HTTP POST requests to send messages. The endpoints for these requests will depend on whether you're sending a message in a channel or in a chat¹.
+
+Please note that this is a high-level overview and the exact implementation will depend on your specific use case and development environment. Always refer to the official Microsoft documentation for the most accurate and up-to-date information.
+
+Source: Conversation with Bing, 10/21/2023
+(1) How To Send Microsoft Teams Self-Message Using Graph SDK - C# Corner. https://www.c-sharpcorner.com/article/how-to-send-microsoft-teams-self-message-using-graph-sdk/.
+(2) Getting Started with Graph API and Teams - Developer Support. https://devblogs.microsoft.com/premier-developer/getting-started-with-graph-api-and-teams/.
+(3) Send chatMessage in a channel or a chat - Microsoft Graph v1.0. https://learn.microsoft.com/en-us/graph/api/chatmessage-post?view=graph-rest-1.0.
+(4) Use the Microsoft Graph API to work with Microsoft Teams. https://learn.microsoft.com/en-us/graph/api/resources/teams-api-overview?view=graph-rest-1.0.
+(5) Post message to MS Teams channel using Graph API. https://stackoverflow.com/questions/59451228/post-message-to-ms-teams-channel-using-graph-api.
+(6) undefined. https://graph.microsoft.com/v1.0/teams/fbe2bf47-16c8-47cf-b4a5-4b9b187c508b/channels/19:4a95f7d8db4c4e7fae857bcebe0623e6@thread.tacv2/messages.
+(7) undefined. https://graph.microsoft.com/v1.0/.
+(8) undefined. https://teams.microsoft.com/l/message/19%3A4a95f7d8db4c4e7fae857bcebe0623e6%40thread.tacv2/1616990032035?groupId=fbe2bf47-16c8-47cf-b4a5-4b9b187c508b&tenantId=2432b57b-0abd-43db-aa7b-16eadd115d34&createdTime=1616990032035&parentMessageId=1616990032035.
