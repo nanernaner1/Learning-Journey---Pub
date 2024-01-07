@@ -70,6 +70,77 @@ The training process for a deep neural network iterations, called epochs. For th
 
 ---
 
+### Summary of hyperparameter tuning
+
+Most machine learning problems require a lot of hyperparameter tuning. Unfortunately, we can't provide concrete tuning rules for every model. Lowering the learning rate can help one model converge efficiently but make another model converge much too slowly. You must experiment to find the best set of hyperparameters for your dataset. That said, here are a few rules of thumb:
+
+- Training loss should steadily decrease, steeply at first, and then more slowly until the slope of the curve reaches or approaches zero.
+- If the training loss does not converge, train for more epochs.
+- If the training loss decreases too slowly, increase the learning rate. Note that setting the learning rate too high may also prevent training loss from converging.
+- If the training loss varies wildly (that is, the training loss jumps around), decrease the learning rate.
+- Lowering the learning rate while increasing the number of epochs or the batch size is often a good combination.
+- Setting the batch size to a very small batch number can also cause instability. First, try large batch size values. Then, decrease the batch size until you see degradation.
+- For real-world datasets consisting of a very large number of examples, the entire dataset might not fit into memory. In such cases, you'll need to reduce the batch size to enable a batch to fit into memory.
+
+#### Remember: the ideal combination of hyperparameters is data dependent, so you must always experiment and verify.
+
+#### Overfitting tip - Training / Testing Split Results
+
+We'd expect a lower precision on the test set
+
+### Addressing Potential issues during the Data Split for Validation Sets and Test Sets
+
+In the [Google Collab]('https://colab.research.google.com/github/google/eng-edu/blob/main/ml/cc/exercises/validation_and_test_sets.ipynb?utm_source=mlcc&utm_campaign=colab-external&utm_medium=referral&utm_content=validation_tf2-colab&hl=en#scrollTo=hMqWDc_m6rUC'), it is highlighted that one of the common issues in Machine Learning is that when you split data, you can end up getting different results for the `loss curves`. "No matter how you split the training set and the validation set, the loss curves differe significantly. Evidently, the data in the training set isn't similar enough to the data in the validation set".
+
+I want to highlight something else and that is the fact that you must include your data as being part of the issue you are not getting the results expected after changing various hyperparameters. After all, your model will only be as good as your data. A good model can not fix your data as it's based on the data itself.
+
+In the training data example, the data is the issue because the data is sorted by one of it's features. By splitting the data using 'order' (example, the 'first 60% is training' and the 'last 40% is testing') you will inadvertently be introducing what I would call a pre-estimation (terrible term, thinking of a better one later).
+
+The `collab` states to fix this is to reindex the data by shuffling it. This is one way to do it with `Pands`. This would be good to check if this is handled by `Pytorch` at all.
+
+```
+# Use the reindex method of your dataframe and create a new variable for the results
+shuffled_train_df = train_df.reindex(np.random.permutation(train_df.index))
+```
+
+At that point, you can retrain your model. I am quoting the `Collab's` "Step 2" as a Note in the code.
+
+```
+2. Pass `shuffled_train_df` (instead of train_df) as the second argument to `train_model` (in the code call associated with Task 1) so that the call becomes as follows:
+epochs, rmse, history = train_model(my_model, shuffled_train_df, my_feature, my_label, epochs, batch_size, validation_split)
+```
+
+### Feature Engineering
+
+75% of your time will be used in this area alone.
+
+Tips:
+String values like 'street names' can be handled using `one-hot` encoding. By using a one-hot encoding; the one hot encoding has a unique coefficient for each possible string we might see. For example, if we have a one hot encoding for street names, we'll have a unique coefficient for each possible street. If we have a one-hot encoding for street names, we will have a unique coefficient for each possible street. 'And then when we see the street we have, say Main Street, we'll put a one in the coefficient for Main Street, and a zero everywhere else. We will use that as our feature vector for representing strings. One-hot encodings are extremely handy for this sort of sparse, categorical data.' << What does this mean? I thought we were mapping each street name with a different integer.>>
+
+#### What makes a Feature a 'Good Feature'.
+
+1. **A feature should occur with a non-zero value at least a handful of times or more in our data set**. If a feature occurs with a non-zero value only extremely rarely, or maybe only once, it's probably not a great feature to use and should maybe be filtered out in a pre-processing step.
+
+2. **Our feature should have a clear and obvious meaning**. For example, it's much easier to have a house age in units of years than a house age in seconds since Unix epoch. It will be much easier to debug and reason about.
+
+3. **Features shouldn't take on magic values**. So for example it would be a bad idea if we had a feature whose job it was to tell us how many days a house had been on the market. Such as trying to use a special value of 'negative 1' to show that the house had never been on the market. Instead a better idea would be to have an indicator feature that would take on a boolean value, showing whether our days on the market feature was defined or not. So we can have a boolean (feature), 1-0 to show is that other feature defined. This allows the `original feature`, 'days_on_the_market', to maintain its natural units of 0 through n.
+
+4. **Our feature values shouldn't change over time**.
+
+5. **A feature shouldn't have crazy outlier values**. For example, in our California housing data, if we create a synthetic feature (`synthetic feature` is a feature you create yourself by computing or combining features and is not included in the original dataset), like 'rooms_per_person', where we take the total rooms and divide it by the total population, we get some reasonable values between 0 and 3 or 4 rooms per person for most city blocks. But in some city blocks, we've got values as high as 50, which does not make very much sense in relation to the other data. What we can do there is maybe cap or transform our feature so that we get rid of those crazy outlier values.
+
+Tip: Binning
+If we think about the effect of latitude on the housing prices in California, there is no sort of linear relationship from North to South that maps directly to housing prices. But within any particular latitude there often is a pretty strong correlation. (sounds like grouping together similar values to increase visibility).
+
+### Good Habits
+
+Know your data. Don't ever treat your data like a 'black box'.
+
+- Visualize your data using historgrams or scatter plots, various rank metrics.
+- You can do various data debugging, that ends up consuming a lot of time from the development looking for "duplicate values", "missing values", anything that looks like an "outlier".
+- Using something that could work like a 'dashboard' that you can interact with your data can be incredibly helpful.
+- Monitor your data over time. Just because your data sources were good yesterday does not mean they will be good tomorrow. Anything you can do to add monitoring to the stability of our features over time, will increase the robustness of our systems.
+
 ### Bing help
 
 How do I know when the dataset is too small or what factors should I consider?
